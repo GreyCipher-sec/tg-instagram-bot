@@ -1,4 +1,4 @@
-# Instagram -> Telegram Bot
+# Instabridge
 
 Automatically detects Instagram links posted in a Telegram group and re-uploads the photos or videos natively.
 
