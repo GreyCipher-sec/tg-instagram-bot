@@ -30,28 +30,26 @@ In BotFather: `/setprivacy` → your bot → **Disable**
 This lets the bot read all group messages, not just commands.
 
 ### 3. Install dependencies
-```bash
+```
 pip install -r requirements.txt
 ```
 
 ### 4. Configure secrets
-```bash
+```
 cp .env.example .env
 # Edit .env and fill in your TELEGRAM_BOT_TOKEN
 ```
 
 ### 5. Run
-```bash
+```
 python bot.py
 ```
 
 ---
 
-## Hosting: Oracle Cloud Free Tier
+## Self-Hosting
 
-This project is hosted on an Oracle Cloud Free Tier ARM VM. Setup on Oracle VM:
-
-```bash
+```
 # Install Python & pip
 sudo apt update && sudo apt install python3 python3-pip -y
 
@@ -71,11 +69,11 @@ nano .env  # fill in your token
 
 ### Run as a persistent systemd service
 
-```bash
+```
 sudo nano /etc/systemd/system/instabot.service
 ```
 
-```ini
+```
 [Unit]
 Description=Instagram Telegram Bot
 After=network.target
@@ -91,7 +89,7 @@ User=ubuntu
 WantedBy=multi-user.target
 ```
 
-```bash
+```
 sudo systemctl enable instabot
 sudo systemctl start instabot
 sudo systemctl status instabot   # check it's running
