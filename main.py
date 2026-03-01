@@ -5,7 +5,6 @@ import tempfile
 from pathlib import Path
 import asyncio
 
-import requests
 from dotenv import load_dotenv
 from telegram import Update, Message
 from telegram.ext import Application, MessageHandler, filters, ContextTypes
