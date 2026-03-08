@@ -92,7 +92,10 @@ def download_images(url: str, output_dir: str) -> list[Path]:
     )
 
     if INSTAGRAM_COOKIES_FILE and Path(INSTAGRAM_COOKIES_FILE).exists():
-        loader.load_session_from_file("", INSTAGRAM_COOKIES_FILE)
+        import http.cookiejar
+        jar = http.cookiejar.MozillaCookieJar(INSTAGRAM_COOKIES_FILE)
+        jar.load(ignore_discard=True, ignore_expires=True)
+        loader.context._session.cookies.update(jar)
 
     post = instaloader.Post.from_shortcode(loader.context, shortcode.group(1))
     loader.download_post(post, target=Path(output_dir))
