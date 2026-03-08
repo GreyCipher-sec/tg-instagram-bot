@@ -78,7 +78,7 @@ def is_photo_post_error(exc: Exception) -> bool:
 
 
 def download_images(url: str, output_dir: str) -> list[Path]:
-    shortcode = re.search(r"/p/([A-Za-z0-9_\-]+)", url)
+    shortcode = re.search(r"/(?:p|reel)/([A-Za-z0-9_\-]+)", url)
     if not shortcode:
         return []
 
@@ -89,37 +89,15 @@ def download_images(url: str, output_dir: str) -> list[Path]:
         download_comments=False,
         save_metadata=False,
         dirname_pattern=output_dir,
-        filename_pattern="{shortcode}_{mediaid}",
     )
 
     if INSTAGRAM_COOKIES_FILE and Path(INSTAGRAM_COOKIES_FILE).exists():
         loader.load_session_from_file("", INSTAGRAM_COOKIES_FILE)
 
     post = instaloader.Post.from_shortcode(loader.context, shortcode.group(1))
-    paths = []
+    loader.download_post(post, target=Path(output_dir))
 
-    if post.typename == "GraphSidecar":
-        for node in post.get_sidecar_nodes():
-            if not node.is_video:
-                loader.download_pic(
-                    filename=os.path.join(output_dir, node.shortcode),
-                    url=node.display_url,
-                    mtime=post.date_utc,
-                )
-                path = Path(output_dir) / f"{node.shortcode}.jpg"
-                if path.exists():
-                    paths.append(path)
-    else:
-        loader.download_pic(
-            filename=os.path.join(output_dir, post.shortcode),
-            url=post.url,
-            mtime=post.date_utc,
-        )
-        path = Path(output_dir) / f"{post.shortcode}.jpg"
-        if path.exists():
-            paths.append(path)
-
-    return paths
+    return sorted(Path(output_dir).glob("*.jpg"))
 
 
 def download_media(url: str, output_dir: str) -> list[Path]:
