@@ -99,21 +99,25 @@ def download_images(url: str, output_dir: str) -> list[Path]:
 
     return sorted(Path(output_dir).glob("*.jpg"))
 
-
 def download_media(url: str, output_dir: str) -> list[Path]:
     try:
         with yt_dlp.YoutubeDL(build_ydl_options(output_dir)) as ydl:
             info = ydl.extract_info(url, download=True)
             entries = info.get("entries") or [info]
             paths = [resolve_file_path(ydl, entry) for entry in entries if entry]
-            return [p for p in paths if p is not None]
+            result = [p for p in paths if p is not None]
+
+            if not result:
+                logger.info("yt-dlp returned no files, falling back to instaloader")
+                return download_images(url, output_dir)
+
+            return result
     except Exception as exc:
         if not is_photo_post_error(exc):
             raise
 
         logger.info("Photo post detected, falling back to instaloader")
         return download_images(url, output_dir)
-
 
 # ── Telegram sending ──────────────────────────────────────────────────────────
 
